@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/styles.css">
+  <script src="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/_ds_bundle.js"></script>
+  <style>
+    body { margin: 0; background: var(--color-bg); -webkit-text-size-adjust: 100%; }
+    a { color: var(--color-accent-700); text-decoration: none; border-bottom: 1px solid var(--color-divider); }
+    a:hover { color: var(--color-accent); }
+    ::placeholder { color: color-mix(in srgb, var(--color-text) 40%, transparent); }
+  </style>
+</helmet>
+
+<div style="min-height: 100vh; background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); font-size: 15px;">
+
+  <sc-if value="{{ isGate }}" hint-placeholder-val="{{ true }}">
+    <div style="min-height: 100vh; display: grid; grid-template-columns: {{ gateCols }};">
+      <div style="padding: clamp(28px, 5vw, 56px) clamp(20px, 4vw, 48px); display: flex; flex-direction: column; justify-content: space-between; gap: clamp(28px, 5vw, 40px); {{ gateDivider }}">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent);">Puzzle No. 01 &nbsp;/&nbsp; 16 words</div>
+          <h1 style="font-size: clamp(40px, 5.6vw, 78px); line-height: 0.92; letter-spacing: -0.03em; margin: 0;">THE<br>CROOKED<br>MOON</h1>
+          <div style="font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent);">A campaign crossword</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 24px; max-width: 440px;">
+          <hr class="hr" style="margin: 0;">
+          <p style="margin: 0; font-size: 16px; line-height: 1.5; text-wrap: pretty;">No hints, no checking, no account. Type a name, fill the grid, submit once. You are ranked by words solved first, then by time.</p>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <label style="font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent);">Name or Discord tag</label>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <input class="input" style="flex: 1 1 210px; height: 46px; font-size: 15px;" placeholder="e.g. thornwick#0421" value="{{ name }}" onChange="{{ onName }}" onKeyDown="{{ onNameKey }}">
+              <button class="btn btn-primary" style="height: 46px; padding: 0 22px;" onClick="{{ onStart }}">Enter the hollow</button>
+            </div>
+            <div style="font-size: 12px; color: var(--color-accent-700); min-height: 18px;">{{ gateError }}</div>
+          </div>
+          <button class="btn btn-ghost" style="align-self: flex-start; padding: 0;" onClick="{{ goBoard }}">Skip to leaderboard &rarr;</button>
+        </div>
+      </div>
+      <div style="padding: clamp(28px, 5vw, 56px) clamp(20px, 4vw, 48px); display: flex; flex-direction: column; gap: 20px; justify-content: center; background: var(--color-surface);">
+        <div style="font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent);">Standing at the top</div>
+        <sc-for list="{{ topThree }}" as="row" hint-placeholder-count="3">
+          <div style="display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; align-items: baseline; gap: 12px; padding: 16px 0; border-top: 2px solid var(--color-divider);">
+            <div style="font-family: var(--font-heading); font-weight: 800; font-size: 24px; color: var(--color-accent);">{{ row.rank }}</div>
+            <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+              <div style="font-family: var(--font-heading); font-weight: 800; font-size: 17px; overflow-wrap: anywhere;">{{ row.name }}</div>
+              <div style="font-size: 12px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">{{ row.wordsText }}</div>
+            </div>
+            <div style="font-variant-numeric: tabular-nums; font-size: 16px;">{{ row.timeText }}</div>
+          </div>
+        </sc-for>
+        <div style="font-size: 12px; line-height: 1.5; color: color-mix(in srgb, var(--color-text) 60%, transparent); padding-top: 8px;">Scores are kept in this browser.</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isPlay }}" hint-placeholder-val="{{ false }}">
+    <div>
+      <div class="nav" style="flex-wrap: wrap; row-gap: 8px; gap: clamp(12px, 3vw, 24px);">
+        <div class="nav-brand" style="font-size: clamp(15px, 3.4vw, 18px);">{{ puzzleTitle }}</div>
+        <div style="display: flex; align-items: baseline; gap: 8px; font-size: 13px;">
+          <span style="font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent);">Player</span>
+          <span style="font-family: var(--font-heading); font-weight: 800;">{{ name }}</span>
+        </div>
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <span style="font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent);">Time</span>
+          <span style="font-family: var(--font-heading); font-weight: 800; font-size: 20px; font-variant-numeric: tabular-nums;">{{ timeText }}</span>
+        </div>
+        <span class="tag tag-outline">{{ filledText }}</span>
+        <button class="btn btn-secondary" onClick="{{ goBoard }}">Leaderboard</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: {{ playCols }};">
+        <div style="padding: clamp(14px, 3.5vw, 28px) clamp(14px, 3.5vw, 32px); {{ playDivider }} display: flex; flex-direction: column; gap: clamp(14px, 3vw, 18px); min-width: 0;">
+          <div style="display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); border-top: 2px solid var(--color-text); border-left: 2px solid var(--color-text); width: 100%; max-width: 484px;">
+            <sc-for list="{{ cells }}" as="cell" hint-placeholder-count="121">
+              <div style="position: relative; aspect-ratio: 1; border-right: 2px solid var(--color-text); border-bottom: 2px solid var(--color-text); background: {{ cell.bg }};">
+                <sc-if value="{{ cell.open }}" hint-placeholder-val="{{ true }}">
+                  <span style="position: absolute; top: 1px; left: 2px; font-size: clamp(7px, 1.6vw, 9px); line-height: 1; font-weight: 600; color: color-mix(in srgb, var(--color-text) 60%, transparent); pointer-events: none;">{{ cell.num }}</span>
+                  <input style="width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background: transparent; text-align: center; text-transform: uppercase; font-family: var(--font-heading); font-weight: 800; font-size: clamp(13px, 3.4vw, 20px); color: var(--color-text); caret-color: transparent; outline: none; cursor: pointer;" value="{{ cell.letter }}" onChange="{{ cell.onChange }}" onKeyDown="{{ cell.onKeyDown }}" onFocus="{{ cell.onFocus }}" onMouseDown="{{ cell.onMouseDown }}" ref="{{ cell.ref }}" autoComplete="off" autoCapitalize="characters" autoCorrect="off" inputMode="text" spellCheck="false" aria-label="{{ cell.label }}">
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; border-left: 2px solid var(--color-accent); padding-left: 12px; max-width: 520px;">
+            <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+              <span style="font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-accent); white-space: nowrap;">{{ activeLabel }}</span>
+              <span style="font-size: 15px; line-height: 1.35; text-wrap: pretty;">{{ activeClue }}</span>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="btn btn-secondary" style="height: 40px; min-width: 46px;" onClick="{{ onPrevWord }}" aria-label="Previous clue">&larr;</button>
+              <button class="btn btn-secondary" style="height: 40px; min-width: 46px;" onClick="{{ onNextWord }}" aria-label="Next clue">&rarr;</button>
+              <button class="btn btn-secondary" style="height: 40px;" onClick="{{ onFlipDir }}">{{ dirLabel }}</button>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+            <button class="btn btn-primary" style="height: 44px; padding: 0 20px;" onClick="{{ onSubmit }}">Submit result</button>
+            <button class="btn btn-ghost" style="height: 44px;" onClick="{{ onClear }}">Clear grid</button>
+            <span style="font-size: 12px; color: color-mix(in srgb, var(--color-text) 60%, transparent);">Arrows move · Space flips direction · Enter next clue</span>
+          </div>
+        </div>
+
+        <div style="padding: clamp(14px, 3.5vw, 28px) clamp(14px, 3.5vw, 32px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: clamp(16px, 3vw, 28px); align-content: start; min-width: 0;">
+          <div style="display: flex; flex-direction: column;">
+            <div style="font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; padding-bottom: 8px; border-bottom: 2px solid var(--color-text);">Across</div>
+            <sc-for list="{{ acrossClues }}" as="clue" hint-placeholder-count="9">
+              <div style="display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; padding: 9px 8px 9px 4px; border-bottom: 1px solid var(--color-divider); cursor: pointer; background: {{ clue.bg }};" onClick="{{ clue.onClick }}">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 13px; color: {{ clue.numColor }};">{{ clue.num }}</span>
+                <span style="font-size: 14px; line-height: 1.4; text-wrap: pretty;">{{ clue.clue }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <div style="font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; padding-bottom: 8px; border-bottom: 2px solid var(--color-text);">Down</div>
+            <sc-for list="{{ downClues }}" as="clue" hint-placeholder-count="7">
+              <div style="display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; padding: 9px 8px 9px 4px; border-bottom: 1px solid var(--color-divider); cursor: pointer; background: {{ clue.bg }};" onClick="{{ clue.onClick }}">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 13px; color: {{ clue.numColor }};">{{ clue.num }}</span>
+                <span style="font-size: 14px; line-height: 1.4; text-wrap: pretty;">{{ clue.clue }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isBoard }}" hint-placeholder-val="{{ false }}">
+    <div>
+      <div class="nav" style="flex-wrap: wrap; row-gap: 8px;">
+        <div class="nav-brand">Leaderboard</div>
+        <span class="tag tag-accent">{{ puzzleTitle }}</span>
+        <button class="btn btn-secondary" onClick="{{ goPlay }}">{{ backLabel }}</button>
+      </div>
+      <div style="padding: clamp(20px, 4vw, 36px) clamp(16px, 4vw, 44px); display: grid; grid-template-columns: {{ boardCols }}; gap: clamp(24px, 4vw, 44px); align-items: start;">
+        <div style="min-width: 0; overflow-x: auto;">
+          <table class="table" style="min-width: 320px;">
+            <thead>
+              <tr>
+                <th style="width: 44px;">#</th>
+                <th>Player</th>
+                <th style="width: 100px;">Words</th>
+                <th style="width: 90px;">Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ board }}" as="row" hint-placeholder-count="4">
+                <tr style="background: {{ row.bg }};">
+                  <td style="font-family: var(--font-heading); font-weight: 800; color: {{ row.rankColor }};">{{ row.rank }}</td>
+                  <td style="font-family: var(--font-heading); font-weight: 800; overflow-wrap: anywhere;">{{ row.name }}</td>
+                  <td style="font-variant-numeric: tabular-nums;">{{ row.wordsText }}</td>
+                  <td style="font-variant-numeric: tabular-nums;">{{ row.timeText }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+          <div style="font-size: 12px; color: color-mix(in srgb, var(--color-text) 60%, transparent); padding-top: 14px;">Ranked by words solved, then by time. Scores are kept in this browser.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 14px; padding: 24px; background: var(--color-surface); border-left: 2px solid var(--color-accent);">
+          <div style="font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent);">Your last run</div>
+          <div style="font-family: var(--font-heading); font-weight: 800; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums;">{{ lastRunTime }}</div>
+          <div style="font-size: 14px; line-height: 1.45;">{{ lastRunNote }}</div>
+          <sc-if value="{{ showKey }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 0; padding-top: 6px;">
+              <div style="font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent); padding-bottom: 6px; border-bottom: 2px solid var(--color-divider);">Answer key</div>
+              <sc-for list="{{ answerKey }}" as="k" hint-placeholder-count="16">
+                <div style="display: grid; grid-template-columns: 34px minmax(0, 1fr) 14px; gap: 8px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--color-divider); font-size: 13px;">
+                  <span style="font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent);">{{ k.label }}</span>
+                  <span style="font-family: var(--font-heading); font-weight: 800; letter-spacing: 0.04em;">{{ k.answer }}</span>
+                  <span style="color: {{ k.color }}; font-weight: 800;">{{ k.glyph }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <hr class="hr" style="margin: 4px 0;">
+          <button class="btn btn-primary" style="height: 42px;" onClick="{{ onPlayAgain }}">Play again</button>
+          <button class="btn btn-ghost" style="padding: 0; align-self: flex-start;" onClick="{{ onSwitchPlayer }}">Change name</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;puzzleTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;The Crooked Moon — Puzzle No. 01&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;leaderboardRows&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:12,&quot;min&quot;:3,&quot;max&quot;:50,&quot;tsType&quot;:&quot;number&quot;},&quot;showAnswerKey&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Results&quot;}}">
+const SIZE = 11;
+const WORDS = [
+  { num: 1,  dir: 'across', r: 0,  c: 0, answer: 'CROWS', clue: 'Black birds that gather where the road bends' },
+  { num: 3,  dir: 'across', r: 0,  c: 6, answer: 'ALTAR', clue: 'Stone where the offering is left' },
+  { num: 4,  dir: 'across', r: 2,  c: 2, answer: 'HOLLY', clue: 'Red-berried evergreen of the hedgerow' },
+  { num: 5,  dir: 'across', r: 4,  c: 0, answer: 'EAVES', clue: 'Where the charm is nailed, above the door' },
+  { num: 6,  dir: 'across', r: 4,  c: 6, answer: 'STAGS', clue: 'Antlered watchers of the wood' },
+  { num: 8,  dir: 'across', r: 6,  c: 2, answer: 'NIGHT', clue: 'When the lanterns go out' },
+  { num: 11, dir: 'across', r: 8,  c: 0, answer: 'ELDER', clue: 'Both a village authority and a flowering tree' },
+  { num: 12, dir: 'across', r: 8,  c: 6, answer: 'MASKS', clue: 'Worn by the whole village on festival night' },
+  { num: 13, dir: 'across', r: 10, c: 2, answer: 'OMENS', clue: 'Signs read in milk, smoke or entrails' },
+  { num: 1,  dir: 'down',   r: 0,  c: 0, answer: 'CRONE', clue: 'The old woman at the edge of the village' },
+  { num: 2,  dir: 'down',   r: 0,  c: 4, answer: 'SALTS', clue: 'Poured across a threshold to keep things out' },
+  { num: 3,  dir: 'down',   r: 0,  c: 6, answer: 'ABYSS', clue: 'What the well seems to have no bottom for' },
+  { num: 4,  dir: 'down',   r: 2,  c: 2, answer: 'HAVEN', clue: 'Sanctuary, of a sort' },
+  { num: 7,  dir: 'down',   r: 4,  c: 8, answer: 'ASHES', clue: 'All that the pyre leaves behind' },
+  { num: 9,  dir: 'down',   r: 6,  c: 4, answer: 'GORSE', clue: 'Thorny yellow-flowered scrub of the moor' },
+  { num: 10, dir: 'down',   r: 6,  c: 6, answer: 'TOMBS', clue: 'Where the barrow-folk keep their dead' }
+];
+const SEED = [
+  { name: 'thornwick#0421', words: 16, time: 604 },
+  { name: 'meg.of.the.mire', words: 14, time: 513 },
+  { name: 'brannoc', words: 11, time: 448 }
+];
+const KEY = 'crooked-moon-crossword-scores-v1';
+const idx = (r, c) => r * SIZE + c;
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const sol = new Array(SIZE * SIZE).fill(null);
+    const nums = new Array(SIZE * SIZE).fill('');
+    WORDS.forEach(w => {
+      for (let k = 0; k < w.answer.length; k++) {
+        const r = w.dir === 'across' ? w.r : w.r + k;
+        const c = w.dir === 'across' ? w.c + k : w.c;
+        sol[idx(r, c)] = w.answer[k];
+      }
+      if (!nums[idx(w.r, w.c)]) nums[idx(w.r, w.c)] = String(w.num);
+    });
+    this.sol = sol;
+    this.nums = nums;
+    this.inputs = [];
+    this.state = {
+      view: 'gate', name: '', gateError: '',
+      letters: new Array(SIZE * SIZE).fill(''),
+      active: idx(0, 0), dir: 'across',
+      elapsed: 0, running: false,
+      scores: SEED.slice(), lastRun: null,
+      narrow: typeof window !== 'undefined' ? window.innerWidth < 860 : false
+    };
+  }
+
+  componentDidMount() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) {
+        const v = JSON.parse(raw);
+        if (Array.isArray(v) && v.length) this.setState({ scores: v });
+      } else {
+        localStorage.setItem(KEY, JSON.stringify(SEED));
+      }
+    } catch (e) {}
+    this.timer = setInterval(() => {
+      if (this.state.running) this.setState(s => ({ elapsed: s.elapsed + 1 }));
+    }, 1000);
+    this.onResize = () => {
+      const n = window.innerWidth < 860;
+      if (n !== this.state.narrow) this.setState({ narrow: n });
+    };
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    window.removeEventListener('resize', this.onResize);
+  }
+
+  fmt(s) {
+    const m = Math.floor(s / 60), x = s % 60;
+    return String(m).padStart(2, '0') + ':' + String(x).padStart(2, '0');
+  }
+  cellsOf(w) {
+    const out = [];
+    for (let k = 0; k < w.answer.length; k++) {
+      out.push(w.dir === 'across' ? idx(w.r, w.c + k) : idx(w.r + k, w.c));
+    }
+    return out;
+  }
+  wordAt(i, dir) { return WORDS.find(w => w.dir === dir && this.cellsOf(w).indexOf(i) !== -1) || null; }
+  activeWord() {
+    const s = this.state;
+    return this.wordAt(s.active, s.dir) || this.wordAt(s.active, s.dir === 'across' ? 'down' : 'across');
+  }
+  solvedWords() { return WORDS.filter(w => this.cellsOf(w).every((i, k) => this.state.letters[i] === w.answer[k])); }
+
+  focusCell(i) {
+    this.setState({ active: i });
+    const el = this.inputs[i];
+    if (el) { el.focus(); try { el.setSelectionRange(1, 1); } catch (e) {} }
+  }
+  step(i, dir, delta) {
+    let r = Math.floor(i / SIZE), c = i % SIZE;
+    for (let n = 0; n < SIZE; n++) {
+      if (dir === 'across') c += delta; else r += delta;
+      if (r < 0 || c < 0 || r >= SIZE || c >= SIZE) return null;
+      if (this.sol[idx(r, c)]) return idx(r, c);
+    }
+    return null;
+  }
+  put(i, ch) {
+    this.setState(s => {
+      const letters = s.letters.slice();
+      letters[i] = ch;
+      return { letters, running: s.running || ch !== '' };
+    });
+  }
+  jumpWord(delta) {
+    const w = this.activeWord();
+    const at = w ? WORDS.indexOf(w) : 0;
+    const nw = WORDS[(at + delta + WORDS.length) % WORDS.length];
+    this.setState({ dir: nw.dir });
+    this.focusCell(idx(nw.r, nw.c));
+  }
+  onCellKey(i, e) {
+    const k = e.key;
+    if (k === 'Backspace') {
+      e.preventDefault();
+      if (this.state.letters[i]) { this.put(i, ''); return; }
+      const prev = this.step(i, this.state.dir, -1);
+      if (prev !== null) { this.put(prev, ''); this.focusCell(prev); }
+      return;
+    }
+    if (k === 'Delete') { e.preventDefault(); this.put(i, ''); return; }
+    if (k === ' ') {
+      e.preventDefault();
+      this.setState(s => ({ dir: s.dir === 'across' ? 'down' : 'across' }));
+      return;
+    }
+    if (k === 'Enter' || k === 'Tab') { e.preventDefault(); this.jumpWord(e.shiftKey ? -1 : 1); return; }
+    const map = { ArrowLeft: ['across', -1], ArrowRight: ['across', 1], ArrowUp: ['down', -1], ArrowDown: ['down', 1] };
+    if (map[k]) {
+      e.preventDefault();
+      const [dir, delta] = map[k];
+      if (this.state.dir !== dir) this.setState({ dir });
+      const n = this.step(i, dir, delta);
+      if (n !== null) this.focusCell(n);
+      return;
+    }
+    if (/^[a-zA-Z]$/.test(k)) {
+      e.preventDefault();
+      this.put(i, k.toUpperCase());
+      const n = this.step(i, this.state.dir, 1);
+      if (n !== null) this.focusCell(n);
+    }
+  }
+
+  onFlipDir = () => this.setState(s => ({ dir: s.dir === 'across' ? 'down' : 'across' }));
+  onPrevWord = () => this.jumpWord(-1);
+  onNextWord = () => this.jumpWord(1);
+  onName = e => this.setState({ name: e.target.value, gateError: '' });
+  onNameKey = e => { if (e.key === 'Enter') this.onStart(); };
+  onStart = () => {
+    const n = this.state.name.trim();
+    if (n.length < 2) { this.setState({ gateError: 'Give me at least two characters.' }); return; }
+    this.setState({ name: n, gateError: '', view: 'play' });
+    setTimeout(() => this.focusCell(idx(0, 0)), 80);
+  };
+  onClear = () => this.setState({ letters: new Array(SIZE * SIZE).fill('') });
+  goBoard = () => this.setState({ view: 'board' });
+  goPlay = () => this.setState({ view: this.state.name ? 'play' : 'gate' });
+  onSubmit = () => {
+    const run = { name: this.state.name || 'anonymous', words: this.solvedWords().length, time: this.state.elapsed };
+    const scores = this.state.scores.concat([run]);
+    try { localStorage.setItem(KEY, JSON.stringify(scores)); } catch (e) {}
+    this.setState({ scores, lastRun: run, running: false, view: 'board' });
+  };
+  onPlayAgain = () => this.setState({
+    view: 'play', letters: new Array(SIZE * SIZE).fill(''), elapsed: 0,
+    running: false, active: idx(0, 0), dir: 'across'
+  });
+  onSwitchPlayer = () => this.setState({ view: 'gate', gateError: '' });
+
+  ranked() {
+    return this.state.scores.slice()
+      .sort((a, b) => (b.words - a.words) || (a.time - b.time))
+      .map((r, n) => ({
+        name: r.name, rank: String(n + 1).padStart(2, '0'),
+        wordsText: r.words + ' / ' + WORDS.length, timeText: this.fmt(r.time),
+        raw: r
+      }));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const aw = this.activeWord();
+    const awCells = aw ? this.cellsOf(aw) : [];
+    const solved = this.solvedWords();
+    const filled = s.letters.filter((l, i) => l && this.sol[i]).length;
+    const total = this.sol.filter(Boolean).length;
+
+    const cells = [];
+    for (let i = 0; i < SIZE * SIZE; i++) {
+      const open = !!this.sol[i];
+      const bg = !open ? 'var(--color-text)'
+        : i === s.active ? 'var(--color-accent-200)'
+        : awCells.indexOf(i) !== -1 ? 'var(--color-accent-100)' : '#ffffff';
+      cells.push({
+        open, bg,
+        num: this.nums[i],
+        letter: s.letters[i] || '',
+        label: 'Row ' + (Math.floor(i / SIZE) + 1) + ' column ' + (i % SIZE + 1),
+        ref: el => { this.inputs[i] = el; },
+        onChange: e => {
+          const v = (e.target.value || '').replace(/[^a-zA-Z]/g, '');
+          if (!v) { this.put(i, ''); return; }
+          const ch = v[v.length - 1].toUpperCase();
+          this.put(i, ch);
+          const n = this.step(i, s.dir, 1);
+          if (n !== null) this.focusCell(n);
+        },
+        onKeyDown: e => this.onCellKey(i, e),
+        onFocus: () => { if (s.active !== i) this.setState({ active: i }); },
+        onMouseDown: () => {
+          if (s.active === i) this.setState(st => ({ dir: st.dir === 'across' ? 'down' : 'across' }));
+        }
+      });
+    }
+
+    const clueRow = w => {
+      const on = aw === w;
+      const done = solved.indexOf(w) !== -1;
+      return {
+        num: String(w.num), clue: w.clue,
+        bg: on ? 'var(--color-accent-100)' : 'transparent',
+        numColor: on ? 'var(--color-accent-700)' : (done ? 'color-mix(in srgb, var(--color-text) 45%, transparent)' : 'var(--color-text)'),
+        onClick: () => { this.setState({ dir: w.dir }); this.focusCell(idx(w.r, w.c)); }
+      };
+    };
+
+    const board = this.ranked();
+    const rows = Math.max(3, this.props.leaderboardRows ?? 12);
+    const last = s.lastRun;
+
+    const narrow = s.narrow;
+    return {
+      isGate: s.view === 'gate', isPlay: s.view === 'play', isBoard: s.view === 'board',
+      gateCols: narrow ? 'minmax(0, 1fr)' : 'minmax(0, 1.1fr) minmax(0, 0.9fr)',
+      gateDivider: narrow ? 'border-bottom: 2px solid var(--color-divider);' : 'border-right: 2px solid var(--color-divider);',
+      playCols: narrow ? 'minmax(0, 1fr)' : 'minmax(0, 548px) minmax(0, 1fr)',
+      playDivider: narrow ? 'border-bottom: 2px solid var(--color-divider);' : 'border-right: 2px solid var(--color-divider);',
+      boardCols: narrow ? 'minmax(0, 1fr)' : 'minmax(0, 2fr) minmax(240px, 1fr)',
+      dirLabel: s.dir === 'across' ? 'Across' : 'Down',
+      onFlipDir: this.onFlipDir, onPrevWord: this.onPrevWord, onNextWord: this.onNextWord,
+      puzzleTitle: this.props.puzzleTitle ?? 'The Crooked Moon — Puzzle No. 01',
+      name: s.name, gateError: s.gateError,
+      onName: this.onName, onNameKey: this.onNameKey, onStart: this.onStart,
+      goBoard: this.goBoard, goPlay: this.goPlay,
+      backLabel: s.name ? 'Back to the grid' : 'Start a run',
+      timeText: this.fmt(s.elapsed),
+      filledText: filled + ' / ' + total + ' letters',
+      cells,
+      activeLabel: aw ? aw.num + ' ' + aw.dir : '',
+      activeClue: aw ? aw.clue : 'Pick a square.',
+      acrossClues: WORDS.filter(w => w.dir === 'across').map(clueRow),
+      downClues: WORDS.filter(w => w.dir === 'down').map(clueRow),
+      onSubmit: this.onSubmit, onClear: this.onClear,
+      onPlayAgain: this.onPlayAgain, onSwitchPlayer: this.onSwitchPlayer,
+      topThree: board.slice(0, 3),
+      board: board.slice(0, rows).map(r => ({
+        ...r,
+        bg: last && r.raw === last ? 'var(--color-accent-100)' : 'transparent',
+        rankColor: r.rank === '01' ? 'var(--color-accent)' : 'var(--color-text)'
+      })),
+      lastRunTime: last ? this.fmt(last.time) : '--:--',
+      lastRunNote: last
+        ? last.words + ' of ' + WORDS.length + ' words solved as ' + last.name + '.'
+        : 'Nothing submitted yet this session.',
+      showKey: !!last && (this.props.showAnswerKey ?? true),
+      answerKey: WORDS.map(w => {
+        const ok = this.cellsOf(w).every((i, k) => s.letters[i] === w.answer[k]);
+        return {
+          label: w.num + (w.dir === 'across' ? 'A' : 'D'), answer: w.answer,
+          glyph: ok ? '✓' : '·',
+          color: ok ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-text) 40%, transparent)'
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>
