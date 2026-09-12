@@ -3,9 +3,12 @@ import { Redis } from '@upstash/redis';
 import { PUZZLE_ID, WORDS, scoreLetters } from '../src/puzzle';
 import type { Score } from '../src/types';
 
-// Vercel's Redis (Upstash) marketplace integration injects these automatically
-// when the integration is attached to the project.
-const redis = Redis.fromEnv();
+// Vercel's Redis marketplace integration injects these under the legacy
+// KV_REST_API_* names (not UPSTASH_REDIS_REST_*), so build the client explicitly.
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL!,
+  token: process.env.KV_REST_API_TOKEN!,
+});
 
 const TOP_N = 50;
 const MIN_NAME_LEN = 2;
