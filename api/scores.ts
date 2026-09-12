@@ -1,7 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { Redis } from '@upstash/redis';
-import { PUZZLE_ID, WORDS, scoreLetters } from '../src/puzzle';
-import type { Score } from '../src/types';
+// Explicit .js extensions: package.json has "type": "module", so Vercel's
+// Node runtime resolves these as native ESM at runtime, which (unlike the
+// Bundler resolution used for the Vite frontend) requires a real extension.
+// TypeScript resolves the .js specifier to the co-located .ts file at
+// compile time; this matches the .js path the deployed function needs.
+import { PUZZLE_ID, WORDS, scoreLetters } from '../src/puzzle.js';
+import type { Score } from '../src/types.js';
 
 // Vercel's Redis marketplace integration injects these under the legacy
 // KV_REST_API_* names (not UPSTASH_REDIS_REST_*), so build the client explicitly.
