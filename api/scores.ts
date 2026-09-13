@@ -48,6 +48,9 @@ function clientIp(req: VercelRequest): string {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const puzzle = typeof req.query.puzzle === 'string' ? req.query.puzzle : PUZZLE_ID;
+  // This is a live shared leaderboard — a cached response (browser, proxy,
+  // or Vercel's edge) can silently hide a just-written score after reload.
+  res.setHeader('Cache-Control', 'no-store');
 
   try {
     const redis = getRedis();

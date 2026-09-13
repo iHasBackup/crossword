@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SIZE, WORDS, idx, cellsOf, buildSolution, type Direction } from './puzzle';
 import type { Score, View } from './types';
-import { fetchScores, submitScore } from './api';
+import { fetchScores, submitScore, ApiError } from './api';
 
 const { sol, nums } = buildSolution();
 
@@ -26,6 +26,7 @@ export function useCrossword() {
   const [running, setRunning] = useState(false);
   const [scores, setScores] = useState<Score[]>([]);
   const [lastRun, setLastRun] = useState<Score | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [narrow, setNarrow] = useState(
     typeof window !== 'undefined' ? window.innerWidth < 860 : false,
   );
@@ -236,6 +237,7 @@ export function useCrossword() {
     setRunning(false);
     setLastRun(run);
     setView('board');
+    setSubmitError(null);
     // Optimistic: show the run immediately, reconcile with the server's
     // authoritative (server-scored) tally on the next fetch.
     setScores((prev) => prev.concat([run]));
@@ -244,8 +246,16 @@ export function useCrossword() {
       setLastRun(saved);
       const fresh = await fetchScores();
       setScores(fresh);
-    } catch {
-      /* optimistic entry stands if the network call fails */
+    } catch (err) {
+      if (err instanceof ApiError) {
+        // The server actually rejected this run (bad input, rate limit,
+        // storage error) — it was never saved, so don't leave a phantom
+        // row in the leaderboard pretending it was.
+        setScores((prev) => prev.filter((s) => s !== run));
+        setSubmitError(err.message);
+      }
+      // Anything else is a network-level failure (offline, etc): the
+      // optimistic entry stands and reconciles on the next successful fetch.
     }
   }, [name, solvedWords, elapsed, letters]);
 
@@ -260,11 +270,13 @@ export function useCrossword() {
     setRunning(false);
     setActive(idx(0, 0));
     setDir('across');
+    setSubmitError(null);
   }, [name]);
 
   const onSwitchPlayer = useCallback(() => {
     setView('gate');
     setGateError('');
+    setSubmitError(null);
   }, []);
 
   const ranked = useMemo(() => {
@@ -302,6 +314,7 @@ export function useCrossword() {
     solvedWords,
     ranked,
     lastRun,
+    submitError,
     filled,
     total,
     focusCell,

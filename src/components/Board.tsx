@@ -5,7 +5,7 @@ import { fmtTime } from '../useCrossword';
 type Props = ReturnType<typeof useCrossword>;
 
 export function Board(props: Props) {
-  const { name, ranked, lastRun, letters, narrow, goPlay, onPlayAgain, onSwitchPlayer } = props;
+  const { name, ranked, lastRun, submitError, letters, narrow, goPlay, onSubmit, onPlayAgain, onSwitchPlayer } = props;
 
   return (
     <div>
@@ -82,6 +82,20 @@ export function Board(props: Props) {
               ? `${lastRun.words} of ${WORDS.length} words solved as ${lastRun.name}.`
               : 'Nothing submitted yet this session.'}
           </div>
+          {submitError && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--color-accent-700)' }}>
+                Not saved to the shared leaderboard: {submitError}
+              </div>
+              <button
+                className="btn btn-secondary"
+                style={{ height: 36, alignSelf: 'flex-start' }}
+                onClick={onSubmit}
+              >
+                Try again
+              </button>
+            </div>
+          )}
           {lastRun && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: 6 }}>
               <div
