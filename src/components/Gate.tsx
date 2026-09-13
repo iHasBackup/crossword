@@ -75,13 +75,6 @@ export function Gate({ name, setName, gateError, ranked, narrow, onStart, goBoar
               {gateError}
             </div>
           </div>
-          <button
-            className="btn btn-ghost"
-            style={{ alignSelf: 'flex-start', padding: 0 }}
-            onClick={goBoard}
-          >
-            Skip to leaderboard &rarr;
-          </button>
         </div>
       </div>
       <div className="gate-right">

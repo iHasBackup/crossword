@@ -11,8 +11,8 @@ export interface WordDef {
   clue: string;
 }
 
-export const PUZZLE_ID = 'crooked-moon-02';
-export const PUZZLE_NUMBER = '02';
+export const PUZZLE_ID = 'crooked-moon-01';
+export const PUZZLE_NUMBER = '01';
 export const PUZZLE_TITLE = `The Crooked Moon — Puzzle No. ${PUZZLE_NUMBER}`;
 
 export const WORDS: WordDef[] = [
