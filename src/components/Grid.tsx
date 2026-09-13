@@ -1,5 +1,8 @@
+import { useEffect, useRef, useState } from 'react';
 import type { useCrossword } from '../useCrossword';
 import { SIZE } from '../puzzle';
+
+const MAX_GRID_PX = 484;
 
 type Props = Pick<
   ReturnType<typeof useCrossword>,
@@ -27,6 +30,24 @@ export function Grid({
   onCellFocus,
   onCellMouseDown,
 }: Props) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState(MAX_GRID_PX);
+
+  // Measuring the wrapper and setting width/height to the same integer
+  // pixel value (rather than leaning on `aspect-ratio`, which some
+  // browsers resolve inconsistently against fr-unit grid tracks) is what
+  // actually guarantees identical column/row sizing — same math, same
+  // input, on both axes.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const update = () => setSize(Math.min(MAX_GRID_PX, Math.floor(el.clientWidth)));
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const cells = [];
   for (let i = 0; i < SIZE * SIZE; i++) {
     const open = !!sol[i];
@@ -66,14 +87,18 @@ export function Grid({
   }
 
   return (
-    <div
-      className="grid"
-      style={{
-        gridTemplateColumns: `repeat(${SIZE}, minmax(0, 1fr))`,
-        gridTemplateRows: `repeat(${SIZE}, minmax(0, 1fr))`,
-      }}
-    >
-      {cells}
+    <div ref={wrapRef} style={{ width: '100%', maxWidth: MAX_GRID_PX }}>
+      <div
+        className="grid"
+        style={{
+          width: size,
+          height: size,
+          gridTemplateColumns: `repeat(${SIZE}, minmax(0, 1fr))`,
+          gridTemplateRows: `repeat(${SIZE}, minmax(0, 1fr))`,
+        }}
+      >
+        {cells}
+      </div>
     </div>
   );
 }

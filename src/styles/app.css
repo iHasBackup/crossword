@@ -66,23 +66,14 @@
 
 .grid {
   display: grid;
-  /* Square container so rows can be sized as fr tracks (matching the
-     columns) instead of content-based auto rows — auto rows were sized
-     off each <input>'s intrinsic content height rather than our
-     height:100%, inflating rows unevenly (worse near the top) and
-     reading as extra black padding on the bottom/right. */
-  aspect-ratio: 1;
-  /* Fills the subpixel seams that appear between grid columns/rows at
-     column counts that don't divide the container width evenly, so any
-     gap reads as the same black lattice instead of a stray white line. */
+  /* width/height are set inline (Grid.tsx) to the same measured integer
+     pixel value — that's what actually guarantees identical column/row
+     track sizing, rather than aspect-ratio, which some browsers resolve
+     inconsistently against fr-unit grid tracks and content-based auto
+     rows (both were observed producing uneven padding on the
+     bottom/right, worse on narrow viewports). */
   background: var(--color-text);
   border: 2px solid var(--color-text);
-  width: 100%;
-  max-width: 484px;
-  /* Flex items get an automatic min-height based on their content's
-     intrinsic size by default, which can win over aspect-ratio and
-     stretch the grid past a true square. Suppress that. */
-  min-height: 0;
 }
 
 .cell {
