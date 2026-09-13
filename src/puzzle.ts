@@ -26,7 +26,7 @@ export const WORDS: WordDef[] = [
   { num: 7, dir: 'down', r: 3, c: 8, answer: 'CROOKEDMAN', clue: "What Eustace Lockwood became after his daughter's death broke him." },
   { num: 8, dir: 'across', r: 4, c: 0, answer: 'STORY', clue: 'What the mysterious cat in the Crooked House library wants from anyone willing to give it one.' },
   { num: 9, dir: 'across', r: 4, c: 6, answer: 'VERMINTOLL', clue: 'The coven the weasel hag belongs to.' },
-  { num: 10, dir: 'down', r: 5, c: 5, answer: 'ALDA', clue: 'Wickermoor innkeeper whose loyalty runs toward money and power, not people.' },
+  { num: 10, dir: 'down', r: 5, c: 5, answer: 'ALDA', clue: 'Wickermoor villager whose loyalty runs toward money and power, not people.' },
   { num: 11, dir: 'across', r: 6, c: 2, answer: 'CAULDRON', clue: "Fabled Heirloom inherited after a hag's death, prone to showing unsettling visions to whoever attunes to it." },
   { num: 12, dir: 'across', r: 8, c: 4, answer: 'PATIENTLADY', clue: 'The faith Sister Rain abandoned her entire village to follow.' },
   { num: 12, dir: 'down', r: 8, c: 4, answer: 'PETUNIA', clue: "She killed Gail Patrini, the house's own maid, and hid it from everyone for decades." },
