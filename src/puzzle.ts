@@ -12,7 +12,8 @@ export interface WordDef {
 }
 
 export const PUZZLE_ID = 'crooked-moon-02';
-export const PUZZLE_TITLE = 'The Crooked Moon — Puzzle No. 02';
+export const PUZZLE_NUMBER = '02';
+export const PUZZLE_TITLE = `The Crooked Moon — Puzzle No. ${PUZZLE_NUMBER}`;
 
 export const WORDS: WordDef[] = [
   { num: 1, dir: 'across', r: 0, c: 0, answer: 'ADELA', clue: "The love of Phillip Druskenvald's life." },

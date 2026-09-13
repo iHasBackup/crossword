@@ -1,4 +1,5 @@
 import type { useCrossword } from '../useCrossword';
+import { PUZZLE_NUMBER, WORDS } from '../puzzle';
 
 type Props = Pick<
   ReturnType<typeof useCrossword>,
@@ -25,7 +26,7 @@ export function Gate({ name, setName, gateError, ranked, narrow, onStart, goBoar
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <div className="kicker" style={{ color: 'var(--color-accent)' }}>
-            Puzzle No. 01&nbsp;&nbsp;/&nbsp;&nbsp;16 words
+            Puzzle No. {PUZZLE_NUMBER}&nbsp;&nbsp;/&nbsp;&nbsp;{WORDS.length} words
           </div>
           <h1 className="gate-title">
             THE
@@ -117,8 +118,17 @@ export function Gate({ name, setName, gateError, ranked, narrow, onStart, goBoar
             <div style={{ fontVariantNumeric: 'tabular-nums', fontSize: 16 }}>{row.timeText}</div>
           </div>
         ))}
-        <div className="muted-60" style={{ fontSize: 12, lineHeight: 1.5, paddingTop: 8 }}>
-          Ranked by the shared leaderboard.
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingTop: 8 }}>
+          <div className="muted-60" style={{ fontSize: 12, lineHeight: 1.5 }}>
+            Showing the top 3. Scores are shared across all players.
+          </div>
+          <button
+            className="btn btn-ghost"
+            style={{ alignSelf: 'flex-start', padding: 0 }}
+            onClick={goBoard}
+          >
+            See the full leaderboard &rarr;
+          </button>
         </div>
       </div>
     </div>
