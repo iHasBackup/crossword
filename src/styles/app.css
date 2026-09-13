@@ -66,8 +66,11 @@
 
 .grid {
   display: grid;
-  border-top: 2px solid var(--color-text);
-  border-left: 2px solid var(--color-text);
+  /* Fills the subpixel seams that appear between grid columns/rows at
+     column counts that don't divide the container width evenly, so any
+     gap reads as the same black lattice instead of a stray white line. */
+  background: var(--color-text);
+  border: 2px solid var(--color-text);
   width: 100%;
   max-width: 484px;
 }
