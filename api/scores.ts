@@ -27,7 +27,8 @@ function getRedis(): Redis {
 const TOP_N = 50;
 const MIN_NAME_LEN = 2;
 const MAX_NAME_LEN = 32;
-const MIN_PLAUSIBLE_TIME = 20; // seconds — below this a run cannot be genuine
+const MIN_PLAUSIBLE_TIME = 3; // seconds — floor against literal zero-time API abuse; players who already
+// know several answers (this is a campaign-lore puzzle) can genuinely finish very fast
 const MAX_PLAUSIBLE_TIME = 24 * 60 * 60; // 24h ceiling against garbage input
 const RATE_LIMIT_WINDOW_S = 60;
 const RATE_LIMIT_MAX = 5;
