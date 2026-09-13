@@ -66,7 +66,13 @@ export function Grid({
   }
 
   return (
-    <div className="grid" style={{ gridTemplateColumns: `repeat(${SIZE}, minmax(0, 1fr))` }}>
+    <div
+      className="grid"
+      style={{
+        gridTemplateColumns: `repeat(${SIZE}, minmax(0, 1fr))`,
+        gridTemplateRows: `repeat(${SIZE}, minmax(0, 1fr))`,
+      }}
+    >
       {cells}
     </div>
   );
