@@ -74,6 +74,7 @@
      bottom/right, worse on narrow viewports). */
   background: var(--color-text);
   border: 2px solid var(--color-text);
+  padding: 2px 0 0 2px
 }
 
 .cell {
