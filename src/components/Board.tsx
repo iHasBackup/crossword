@@ -104,11 +104,8 @@ export function Board(props: Props) {
                       {w.num}
                       {w.dir === 'across' ? 'A' : 'D'}
                     </span>
-                    <span
-                      className={ok ? undefined : 'muted-40'}
-                      style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, letterSpacing: '0.04em' }}
-                    >
-                      {ok ? w.answer : 'UNKNOWN'}
+                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, letterSpacing: '0.04em' }}>
+                      {ok ? w.answer : ''}
                     </span>
                     <span
                       style={{
