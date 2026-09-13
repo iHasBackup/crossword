@@ -250,13 +250,17 @@ export function useCrossword() {
   }, [name, solvedWords, elapsed, letters]);
 
   const onPlayAgain = useCallback(() => {
+    if (!name) {
+      setView('gate');
+      return;
+    }
     setView('play');
     setLetters(emptyLetters());
     setElapsed(0);
     setRunning(false);
     setActive(idx(0, 0));
     setDir('across');
-  }, []);
+  }, [name]);
 
   const onSwitchPlayer = useCallback(() => {
     setView('gate');
